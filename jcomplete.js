@@ -3,7 +3,7 @@
         var me = $( this );
         
         var settings = $.extend({
-            type: me.attr('data-type')?me.attr('data-type'):2,
+            type: me.data('type')?me.data('type'):"2,3",
             input_name: 'id_list',
             url: "/ajax.php",
             source: function(request, response){
@@ -84,9 +84,18 @@
           });  
 
     }
-//    $.fn.jcomplete.settings = function ( key ) {
-//        return settings[key];
-//    }
+    $.fn.jcomplete.settings = function ( key ) {
+        return settings[key];
+    }
+    $.fn.jcomplete.get_items = function ( obj, result_to, text_to ) {
+//        if($.fn.jcomplete.settings['get_source'])
+        $.getJSON($.fn.jcomplete.settings['get_source']+"&wpid="+$(obj).parent().find("[name='pid']").val()).done(function(data){
+            for(var p in data.positions){ 
+                if (!(p >>> 0 === parseFloat(p)))continue; //test for integer
+                $.fn.jcomplete.add_item(obj, result_to, text_to, data.positions[p].id, data.positions[p].name);
+            }
+        });
+    }
     $.fn.jcomplete.add_item = function (obj, result_to, text_to, id, value) {
 
         vl = $(result_to);
